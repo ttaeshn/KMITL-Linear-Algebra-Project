@@ -1,2 +1,2 @@
-# Linea-Algebra-Project
+# Linear-Algebra-Project
 CE-KMITL-Project
