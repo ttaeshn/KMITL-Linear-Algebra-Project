@@ -4,14 +4,14 @@ import os
 
 path_to_repo = r'C:\Users\taesh\Work\Linea-Algebra-Project'
 
-# Target folder name
-target_folder = 'papaya_image'
+# # Target folder name
+# target_folder = 'papaya_image'
 
-for dirname, _, filenames in os.walk(path_to_repo):
-    if target_folder in dirname:
-        print(f"Accessing directory: {dirname}")
-        for filename in filenames:
-            print(os.path.join(dirname, filename))
+# for dirname, _, filenames in os.walk(path_to_repo):
+#     if target_folder in dirname:
+#         print(f"Accessing directory: {dirname}")
+#         for filename in filenames:
+#             print(os.path.join(dirname, filename))
 
 from fastapi import FastAPI, File, UploadFile
 from fastapi.responses import JSONResponse
@@ -37,7 +37,7 @@ def load_images_from_folder(folder, label, size=(64, 64)):
         img = cv2.imread(img_path, cv2.IMREAD_GRAYSCALE)
         if img is not None:
             img = cv2.resize(img, size)
-            print("Loaded image shape:", img.shape)  # Check image shape
+            # print("Loaded image shape:", img.shape)  # Check image shape
             images.append(img.flatten())
             labels.append(label)
     return images, labels
@@ -66,9 +66,13 @@ def show_sample_images(images, labels, categories, num_samples=5):
 
 base_path = 'C:\\Users\\taesh\\Work\\Linea-Algebra-Project\\papaya_image'
 X, y, categories = load_dataset(base_path)
+<<<<<<< Updated upstream
 # print(X, y, categories)
+=======
+# print(categories)
+>>>>>>> Stashed changes
 print("Number of samples:", len(X))  
-show_sample_images(X, y, categories)
+# show_sample_images(X, y, categories)
 
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
