@@ -2,8 +2,6 @@ import numpy as np
 import pandas as pd
 import os
 
-path_to_repo = r'C:\Users\taesh\Work\Linea-Algebra-Project'
-
 # # Target folder name
 # target_folder = 'papaya_image'
 
@@ -13,7 +11,9 @@ path_to_repo = r'C:\Users\taesh\Work\Linea-Algebra-Project'
 #         for filename in filenames:
 #             print(os.path.join(dirname, filename))
 
-from fastapi import FastAPI, File, UploadFile
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi import FastAPI, File, UploadFile, Request
+from pydantic import BaseModel
 from fastapi.responses import JSONResponse
 from PIL import Image
 import io
@@ -27,6 +27,19 @@ from sklearn.metrics import classification_report, confusion_matrix
 import seaborn as sns
 
 app = FastAPI()
+
+origins = [
+    "http://localhost:5173",
+    #"http://127.0.0.1:5173",
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # กำหนด origin ที่อนุญาต
+    allow_credentials=True,
+    allow_methods=["*"],  # อนุญาตทุก method เช่น GET, POST
+    allow_headers=["*"],  # อนุญาตทุก header
+)
 
 #loading images
 def load_images_from_folder(folder, label, size=(64, 64)):
@@ -64,13 +77,9 @@ def show_sample_images(images, labels, categories, num_samples=5):
         plt.axis('off')
     plt.show()
 
-base_path = 'C:\\Users\\taesh\\Work\\Linea-Algebra-Project\\papaya_image'
+base_path = 'papaya_image'
 X, y, categories = load_dataset(base_path)
-<<<<<<< Updated upstream
 # print(X, y, categories)
-=======
-# print(categories)
->>>>>>> Stashed changes
 print("Number of samples:", len(X))  
 # show_sample_images(X, y, categories)
 
@@ -102,8 +111,9 @@ async def root():
     return {"message": "Hello World"}
 
 @app.post("/classify")
-async def classify_image(file: UploadFile = File(...)):
+async def classify_image(file: UploadFile):
     contents = await file.read()
+    print(file)
     img = Image.open(io.BytesIO(contents))
 
     img = img.convert('L')  
@@ -118,9 +128,29 @@ async def classify_image(file: UploadFile = File(...)):
 
     # Determine if the result is suitable for papaya salad
     if predicted_category in ['unmature', 'partiallymature']:
-        message = "can do papaya salad"
+        message = "can do papaya salad !!!"
     else:
-        message = "can't do papaya salad"
+        message = "can't do papaya salad, aod eat zab ;("
 
     # Return the classification result and the message
     return JSONResponse(content={"label": predicted_category, "message": message})
+
+@app.get("/test")
+def read_test():
+    return {"message": "Hello from FastAPI"}
+
+class TextRequest(BaseModel):
+    message: str
+    
+class sendTestModel(BaseModel):
+    id : int
+    name : str
+    isTrue : bool
+
+@app.post("/send-test")
+async def classify_image(request : TextRequest):
+    return { "message": request.message }
+
+@app.post("/upload-file")
+async def create_upload_file(file: UploadFile):
+    return {"filename": file.filename}
