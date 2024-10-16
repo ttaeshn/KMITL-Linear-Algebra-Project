@@ -1,6 +1,11 @@
-import React, { useState, useEffect } from 'react'
-import api from './api'
+import React, { useState, useEffect, useRef } from 'react'
+import { SpeakerWaveIcon } from "@heroicons/react/24/outline"
+import { PlayIcon, PauseIcon } from "@heroicons/react/20/solid"
+
+// import { backgroundMusic } from "./assets/background-music-cut.mp3"
+
 import axios from 'axios';
+
 import FormData from 'form-data';
 import './App.css'
 
@@ -8,13 +13,45 @@ function App() {
 	const [file, setFile] = useState(null);
 	const [image, setImage] = useState(null);
 	const [isLoading, setIsLoading] = useState(false);
+
+	const [isPlaying, setIsPlaying] = useState(false);
+	const audioRef = useRef(new Audio('/background-music-cut.mp3'));
+
+	// const BackgroundAudio = new Audio("src/background-music-cut.mp3");
+
+	useEffect(() => {
+		const BackgroundAudio = audioRef.current;
+		if (!isPlaying) {
+		BackgroundAudio.addEventListener('ended', () => {
+			BackgroundAudio.currentTime = 0;
+			BackgroundAudio.play();          // เล่นเพลงใหม่
+		});
+	    
+		return () => {
+			BackgroundAudio.removeEventListener('ended', () => {});
+		};
+		}
+	}, []);
+
+	const handlePlayPause = () => {
+		const BackgroundAudio = audioRef.current;
+		if (isPlaying) {
+			BackgroundAudio.pause(); // หยุดเพลง
+		} else {
+			BackgroundAudio.play();  // เล่นเพลง
+		}
+		setIsPlaying(!isPlaying); // สลับสถานะการเล่น
+	};
+
+	
+
 	
 	const handleChange = (e)=>{
 		if (e.target.files && e.target.files[0]) {
 			setFile(URL.createObjectURL(e.target.files[0]));
 			setImage(e.target.files[0]);
 		}
-		document.getElementById("papaya").style.margin = "1rem auto 1rem auto";
+		document.getElementById("papaya").style.margin = "auto auto auto auto";
 	    }
 
 	const [message, setMessage] = useState('');
@@ -70,25 +107,41 @@ function App() {
 		}
 	};
 
-
-	// ถ้าจะใส่ api แล้ว แสดงผลออกให้ใส่มาที่ตรงนี้
-	// function sendAPI(e){
-	// 	console.log('Hello');
-	// 	const response = async api.get('/')
-	// }
-	//
-
   return (
   	<>
 	
 	<main className=''> 
-		<div className=''>
-			<h1 className='text-3xl font-bold text-red-500 m-4'>นวัตกรรมช่วยคนกินแซ่บ</h1>
-			<input className='m-4' type="file" onChange={handleChange} />
-            		<img src={file} className='block max-w-2xl max-h-72 ' id='papaya' />
-			<button className='btn m-4' onClick={handleSubmit}>submit</button>
-			{/* <button className='btn m-4' onClick={sendTest}>Test</button> */}
-			{isLoading ? <p>Loading...</p> : <p>{message}</p>}
+		<div className='b'>
+			<h1 className='text-3xl font-bold text-red-500 m-4'></h1>
+			<div className='flex ml-auto mr-auto  absolute left-0 right-0' style={{width: "33rem", height: "288px", maxHeight: "288px"}}>
+				
+				<img src={file} className='object-contain mt-0 mb-0 align-middle justify-center' class="clearfix" id='papaya'  style={{maxHeight:"288px", lineHeight:"288px"}}/>
+			</div>
+            		
+			<div className='pt-52  w-40' >
+				<button onClick={handlePlayPause} className='relative'>
+					{isPlaying ?  (
+						<div className='h-28 w-40'/>
+						// <PauseIcon className='h-28 w-40' aria-hidden="true"/>
+					) :(
+						<div className='h-28 w-40'/>
+						// <PlayIcon className='h-28 w-40 bg-red-300' aria-hidden="true"/>
+					)}
+				</button>
+			</div>
+			
+			<div>
+				<label for="file-upload" class="custom-file-upload">
+					อัปโหลดรูปภาพ
+				</label>
+				<input id="file-upload" type="file"   onChange={handleChange}/>
+				{/* <input className='m-4 relative' type="file" onChange={handleChange} /> */}
+				<button className='btn relative' onClick={handleSubmit}>ยืนยัน</button>
+				{/* <button className='btn m-4' onClick={sendTest}>Test</button> */}
+				{isLoading ? <p className='text-4xl mt-14'>Loading...</p> : <p className='text-4xl mt-14'>{message}</p>}
+				{/* <audio ref={musicRef} loop src='./linear-website/public/background-music(cut).mp3'/> */}
+			</div>
+			
 
 		</div>
 	</main>
