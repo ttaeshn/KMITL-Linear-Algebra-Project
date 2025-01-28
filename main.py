@@ -116,7 +116,7 @@ async def classify_image(file: UploadFile):
     print(file)
     img = Image.open(io.BytesIO(contents))
 
-    img = img.convert('L')  
+    img = img.convert('P')  
     img = img.resize((64, 64))  
     img_array = np.array(img).flatten()  
 

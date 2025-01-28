@@ -57,12 +57,15 @@ function App() {
 	const [message, setMessage] = useState('');
 
 	const handleSubmit = async (event) => {
-		setIsLoading(true);
+		
 		event.preventDefault();
 		if (!file) {
 			alert("Please select a file first.");
 			return;
+		} else {
+			setIsLoading(true);
 		}
+		
 
 		
 		let formData = new FormData();
