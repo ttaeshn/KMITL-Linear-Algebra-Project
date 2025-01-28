@@ -1,2 +1,2 @@
 # Linear-Algebra-Project
-CE-KMITL-Project
+CE-KMITL-Project (Image Classification)
